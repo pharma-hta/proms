@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Demo edukasi formulir EQ-5D-5L dengan value set Indonesia dan kalkulasi QALY sederhana.">
+<title>EQ-5D-5L | Kalkulator contoh Indonesia</title>
+<style>
+  :root{--ink:#172d3e;--muted:#647887;--line:#dce6e9;--paper:#fff;--bg:#f2f7f6;--teal:#087f78;--teal2:#dff4ef;--amber:#fff2d6;--shadow:0 14px 38px rgba(20,54,68,.08)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+  main{max-width:1050px;margin:auto;padding:38px 22px 64px}
+  .eyebrow{color:var(--teal);font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:.75rem}
+  .hero{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:end;margin:0 0 24px}
+  .hero h1{font-size:clamp(2rem,5vw,3.25rem);line-height:1.08;letter-spacing:-.04em;margin:8px 0}
+  .hero p{color:var(--muted);max-width:690px;margin:0}
+  .tag{background:var(--teal2);color:#075a56;padding:8px 12px;border-radius:99px;font-size:.8rem;font-weight:750;white-space:nowrap}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:24px;margin:18px 0;box-shadow:var(--shadow)}
+  .section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:20px}
+  .section-head h2{font-size:1.35rem;letter-spacing:normal;margin:0 0 5px}
+  .section-head p{color:var(--muted);margin:0}
+  .main-question{font-size:.92rem!important;color:var(--muted)!important;margin-top:4px!important}
+  .profile-sticky{position:sticky;top:12px;z-index:20;display:flex;align-items:center;gap:10px;width:max-content;max-width:100%;margin:0 0 14px auto;padding:10px 16px;background:#102d3b;color:#fff;border:1px solid rgba(255,255,255,.18);border-radius:14px;box-shadow:0 8px 24px rgba(16,45,59,.2);font-size:.9rem}
+  .profile-sticky strong{font-size:1.15rem;letter-spacing:.08em;font-variant-numeric:tabular-nums}
+  .profile-sticky output{font-size:1.35rem;font-weight:850;color:#a7eee1;letter-spacing:.08em;font-variant-numeric:tabular-nums}
+  .dimension{display:grid;grid-template-columns:minmax(220px,.85fr) minmax(300px,1.5fr);gap:22px;padding:20px 0;border-top:1px solid var(--line);align-items:start}
+  .dimension:first-child{border-top:0}
+  .dim-title{font-weight:820;font-size:.98rem;letter-spacing:.045em;text-transform:uppercase;margin:1px 0 7px;color:var(--ink)}
+  .dim-prompt{margin:0 0 5px;font-weight:680;line-height:1.4}
+  .dimension small{display:block;color:var(--muted);font-weight:450;margin-top:4px}
+  .choices{display:grid;gap:7px;margin-top:0}
+  .choice{position:relative;display:block}
+  .choice input{position:absolute;opacity:0;width:1px;height:1px;cursor:pointer}
+  .choice span{display:flex;justify-content:flex-start;align-items:center;gap:11px;min-height:42px;padding:7px 11px;border:1px solid var(--line);border-radius:10px;background:#fbfdfd;color:#375264;font-weight:520;line-height:1.4;cursor:pointer;transition:background .15s,border-color .15s,box-shadow .15s}
+  .choice span::before{content:attr(data-level);display:grid;place-items:center;flex:0 0 27px;height:27px;border:1.5px solid #a8b8bd;border-radius:50%;font-size:.78rem;font-weight:800;color:#536b78;background:#fff}
+  .choice:hover span{border-color:#9ccfc8;background:#f2faf8}
+  .choice input:checked+span{background:var(--teal2);border-color:#86c9c0;color:#123e42;box-shadow:0 2px 8px rgba(8,127,120,.09)}
+  .choice input:checked+span::before{background:var(--teal);border-color:var(--teal);color:#fff}
+  .choice input:focus-visible+span{outline:3px solid #8cd6cd;outline-offset:2px}
+  .status{background:#f5f9f9;color:var(--muted);border:0;border-radius:12px;padding:13px 16px;margin-top:15px}
+  .vas-scale{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:14px;align-items:start;margin:18px 0 14px;text-align:center;font-size:.82rem;color:var(--muted)}
+  .vas-scale>span:first-child{text-align:left;max-width:190px}.vas-scale>span:last-child{text-align:right;max-width:190px;justify-self:end}
+  .vas-current{display:flex;flex-direction:column;align-items:center;color:var(--ink)!important;min-width:72px}
+  .vas-current output{font-size:2.6rem;font-weight:850;line-height:1.05;color:var(--teal)}.vas-current small{font-size:.75rem}
+  .vas-control{margin-top:0}
+  #vasScore{display:block;width:100%;height:20px;margin:0;accent-color:var(--teal);cursor:pointer;direction:ltr}
+  .vas-ticks{display:flex;justify-content:space-between;color:var(--muted);font-size:.74rem;padding:0 2px}
+  .results{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}
+  .result-box{background:#f5f9f9;border:1px solid var(--line);border-radius:15px;padding:18px}
+  .result-box.primary{background:var(--teal);border-color:var(--teal);color:#fff}
+  .result-label{font-size:.86rem;font-weight:700}.result-number{font-size:2.45rem;font-weight:850;line-height:1.2;margin:7px 0}.result-note{font-size:.86rem;opacity:.88}
+  .entry{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:18px 0}
+  .entry input{width:140px;padding:11px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;color:var(--ink)}
+  .small{font-size:.86rem;color:var(--muted)}.unit{color:var(--muted)}
+  .actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
+  button{background:var(--teal);color:#fff;border:0;border-radius:10px;padding:11px 15px;font:inherit;font-weight:700;cursor:pointer}
+  button.secondary{background:#eaf1f2;color:var(--ink)}button:focus-visible{outline:3px solid #8cd6cd;outline-offset:2px}
+  .formula{background:#102d3b;color:#fff;border-radius:13px;padding:17px 20px;font-weight:700;line-height:1.7;overflow-wrap:anywhere}
+  .coeff{width:100%;border-collapse:collapse;margin:15px 0;font-size:.9rem}.coeff th,.coeff td{padding:10px;border:1px solid var(--line);text-align:left}.coeff th{background:#f5f9f9}
+  .coeff-wrap{overflow-x:auto}.steps{padding-left:23px}.steps li{margin:8px 0}
+  .warning{background:#fff2d6;color:#674b0b;border-radius:13px;padding:16px 18px;line-height:1.6}
+  details{border-top:1px solid var(--line);padding-top:14px;margin-top:14px}summary{font-weight:750;cursor:pointer}.quote{font-size:.92rem}
+  a{color:#075a56}.foot{font-size:.9rem;color:var(--muted);text-align:left;margin-top:22px}
+  @media(max-width:700px){main{padding:25px 14px 45px}.hero{display:block}.tag{display:inline-block;margin-top:14px}.card{padding:18px}.section-head{gap:16px}.dimension{grid-template-columns:1fr;gap:11px}.results{grid-template-columns:1fr}.vas-scale{font-size:.73rem;gap:8px}.vas-scale>span:first-child,.vas-scale>span:last-child{max-width:120px}.profile-sticky{top:6px;width:100%;justify-content:space-between;padding:9px 12px}}
+</style>
+</head>
+<body>
+<main>
+  <div class="profile-sticky" role="status" aria-live="polite" aria-label="Profil hasil kuesioner tetap terlihat saat menggulir">
+    <span>Profil EQ-5D-5L</span><strong id="stickyProfile">—</strong><span aria-hidden="true">·</span><span>Indeks</span><output id="stickyIndex">—</output>
+  </div>
+  <header class="hero">
+    <div><div class="eyebrow">Demo instrumen kesehatan</div><h1>EQ-5D-5L<br>Indonesia</h1><p>Contoh formulir interaktif untuk mencatat profil kesehatan, mengubahnya menjadi utility index, lalu membuat ilustrasi QALY berdasarkan sisa harapan hidup.</p></div>
+    <span class="tag">Contoh edukasi · bukan alat diagnosis</span>
+  </header>
+
+  <section class="card" aria-labelledby="form-title">
+    <div class="section-head"><div><h2 id="form-title">1. Profil kesehatan hari ini</h2><p class="main-question"><b>Bagaimana kondisi kesehatan Anda hari ini?</b><br>Untuk setiap dimensi di bawah, pilih satu pernyataan yang paling sesuai dengan keadaan Anda hari ini. Pilih satu jawaban per dimensi.</p></div></div>
+    <div id="dimensions"></div>
+    <div class="status" id="formStatus" role="status" aria-live="polite">Pilih tingkat pada semua dimensi untuk menghitung indeks.</div>
+  </section>
+
+  <section class="card" aria-labelledby="vas-title">
+    <div class="section-head"><div><h2 id="vas-title">Penilaian kesehatan Anda (EQ VAS)</h2><p>Tambahkan penilaian diri atas kesehatan secara keseluruhan hari ini. Skor ini terpisah dari utility index EQ-5D-5L dan tidak digunakan dalam perhitungan indeks/QALY di kalkulator ini.</p></div></div>
+    <p>Bayangkan skala dari 0 sampai 100. Nilai 100 menunjukkan kesehatan terbaik yang dapat Anda bayangkan, sedangkan 0 menunjukkan kesehatan terburuk yang dapat Anda bayangkan. Tandai pada skala nilai yang paling menggambarkan kesehatan Anda hari ini.</p>
+    <label for="vasScore"><b>Kesehatan Anda hari ini</b></label>
+    <div class="vas-scale"><span><b>0</b><br>kesehatan terburuk yang dapat Anda bayangkan</span><span class="vas-current"><output id="vasOutput" for="vasScore">80</output><small>Nilai yang dipilih</small></span><span><b>100</b><br>kesehatan terbaik yang dapat Anda bayangkan</span></div>
+    <div class="vas-control"><input id="vasScore" type="range" min="0" max="100" step="1" value="80" aria-label="Pilih nilai kesehatan pada EQ VAS, dari 0 sampai 100"><div class="vas-ticks" aria-hidden="true"><span>0</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100</span></div></div>
+    <p class="small">Pilih nilai pada skala dari 0 (kesehatan terburuk yang dapat Anda bayangkan) hingga 100 (kesehatan terbaik yang dapat Anda bayangkan). EQ VAS pada formulir asli tersusun vertikal; kontrol horizontal ini adalah adaptasi digital.</p>
+  </section>
+
+  <section class="card" aria-labelledby="result-title">
+    <div class="section-head"><div><h2 id="result-title">2. Hasil utility dan QALY</h2><p>Indeks dihitung dari value set Indonesia yang dicantumkan di bagian metode di bawah.</p></div></div>
+    <div class="results">
+      <div class="result-box primary"><div class="result-label">EQ-5D-5L utility index</div><div class="result-number" id="index">—</div><div class="result-note" id="indexNote">Lengkapi kelima dimensi terlebih dahulu.</div></div>
+      <div class="result-box"><div class="result-label">QALY ilustratif dari kondisi ini</div><div class="result-number" id="qaly">—</div><div class="result-note">Asumsi utility tetap sama sepanjang sisa hidup.</div></div>
+    </div>
+    <div class="entry"><label for="lifeYears"><b>Angka harapan hidup</b></label><input id="lifeYears" type="number" min="0" max="120" step="0.1" value="20" inputmode="decimal"><span class="unit">tahun</span><span class="small">Masukkan perkiraan jumlah tahun hidup yang tersisa untuk dihitung dalam ilustrasi QALY ini.</span></div>
+    <div class="status" id="qalyDetail" role="status" aria-live="polite">QALY = utility index × tahun.</div>
+    <div class="actions"><button type="button" id="copyBtn">Salin ringkasan hasil</button><button class="secondary" type="button" id="resetBtn">Reset jawaban</button></div>
+    <div class="small" id="copyStatus" aria-live="polite"></div>
+  </section>
+
+  <section class="card" aria-labelledby="method-title">
+    <div class="section-head"><div><h2 id="method-title">3. Bagaimana indeks dihitung?</h2><p>Model aditif: skor dimulai dari 1, lalu penalti dari level masalah dikurangi.</p></div></div>
+    <div class="formula">Indeks = 1 − Σ(koefisien transisi level yang dilalui pada tiap dimensi)</div>
+    <p class="small">Koefisien mewakili tambahan penurunan utility setiap kali naik satu tingkat masalah dari level sebelumnya. Jadi penalti level 4 adalah jumlah koefisien transisi 1→2, 2→3, dan 3→4. <b>Tidak ada penalti N3/I5L terpisah</b> pada model hybrid Indonesia ini.</p>
+    <div class="coeff-wrap"><table class="coeff" aria-label="Koefisien transisi tingkat masalah"><thead><tr><th>Dimensi</th><th>1 → 2</th><th>2 → 3</th><th>3 → 4</th><th>4 → 5</th></tr></thead><tbody id="coefficientRows"></tbody></table></div>
+    <ol class="steps">
+      <li>Ambil satu angka level (1–5) untuk setiap dimensi: mobilitas (MO), perawatan diri (SC), kegiatan biasa (UA), nyeri/ketidaknyamanan (PD), dan cemas/depresi (AD).</li>
+      <li>Untuk setiap dimensi, jumlahkan koefisien transisi yang dilalui sejak level 1 hingga level terpilih. Contoh level 4 berarti menjumlahkan transisi 1→2, 2→3, dan 3→4.</li>
+      <li>Jumlahkan penalti kelima dimensi, lalu kurangi hasilnya dari 1. Dengan state 11111 tidak ada penalti, sehingga indeks = 1,000.</li>
+      <li>Indeks negatif dapat terjadi dan bukan kesalahan hitung; artinya keadaan kesehatan dinilai lebih buruk daripada dead (0) pada skala preferensi value set. Nilai 1 merepresentasikan kesehatan penuh.</li>
+    </ol>
+    <div class="warning"><b>Catatan penting:</b> koefisien yang dipakai dalam demo ini adalah value set EQ-5D-5L Indonesia dari studi Purba dkk. (2017), ditransformasikan dari tabel model menjadi penalti per level. Untuk riset, evaluasi HTA, publikasi, atau keputusan klinis, verifikasi spesifikasi algoritme, lisensi instrumen, dan koefisien terhadap sumber primer/EuroQol sebelum digunakan. Ini contoh implementasi, bukan instrumen resmi yang disediakan EuroQol.</div>
+  </section>
+
+  <section class="card" aria-labelledby="qaly-title">
+    <div class="section-head"><div><h2 id="qaly-title">4. Interpretasi QALY dan batas asumsi</h2><p>QALY (quality-adjusted life years) menggabungkan lama hidup dengan kualitas hidup.</p></div></div>
+    <div class="formula">QALY = Σ (utility pada periode t × durasi periode t dalam tahun)<br>Demo sederhana: QALY = utility saat ini × angka harapan hidup (tahun)</div>
+    <p>Contoh: jika utility index <b>0,80</b> dan angka harapan hidup yang dimasukkan <b>20 tahun</b>, maka perhitungan sederhana memberi <b>16 QALY</b>. Untuk ilustrasi perubahan kualitas hidup selama sisa umur, angka yang dimasukkan perlu merepresentasikan perkiraan tahun hidup yang tersisa. Ini bukan prediksi survival atau nilai manfaat terapi.</p>
+    <p>Asumsi kalkulator ini: utility saat ini tetap konstan selama jangka waktu yang dimasukkan, tanpa diskonto, tanpa perubahan status kesehatan, dan tanpa ketidakpastian mortalitas. Analisis ekonomi kesehatan biasanya memodelkan state kesehatan/transisi dan kematian per siklus, menggunakan utility tiap state, serta menerapkan diskonto sesuai pedoman yang relevan. Gunakan estimasi durasi hidup yang sesuai dengan konteks analisis.</p>
+    <details><summary>Referensi dan transparansi</summary>
+      <p class="quote">Purba FD, Hunfeld JAM, Isaran I, et al. The Indonesian EQ-5D-5L value set. <i>Pharmacoeconomics</i>. 2017;35(11):1153–1165. doi:10.1007/s40273-017-0538-9.</p>
+      <p class="small">Nilai yang diterapkan adalah koefisien model hybrid (final value set) Tabel 3 Purba dkk.; tiap koefisien adalah tambahan utility decrement saat berpindah dari satu level ke tingkat berikutnya. Label pertanyaan dan jawaban pada demo ini disusun sebagai parafrasa informatif, bukan reproduksi terverifikasi dari teks resmi Bahasa Indonesia. Untuk pengumpulan data resmi, pakai kuesioner dan VAS versi Indonesia yang disediakan/diotorisasi EuroQol Group; penggunaan EQ-5D-5L mungkin memerlukan registrasi atau izin. Periksa persyaratan terkini.</p>
+      <p><a href="https://doi.org/10.1007/s40273-017-0538-9" target="_blank" rel="noopener noreferrer">Buka publikasi value set Indonesia (DOI)</a> · <a href="https://euroqol.org/register/" target="_blank" rel="noopener noreferrer">EuroQol Group — pendaftaran untuk mendapatkan instrumen resmi</a></p>
+    </details>
+  </section>
+  <footer class="foot">Privasi: kalkulator berjalan sepenuhnya di peramban ini. Jawaban tidak dikirim atau disimpan oleh halaman.</footer>
+</main>
+<script>
+(() => {
+  'use strict';
+  // Koefisien penalti transisi per level (2–5), value set Indonesia.
+  const dims = [
+    {code:'MO', name:'Mobilitas', prompt:'Bagaimana kondisi Anda hari ini dalam hal berjalan?', help:'Pilih satu jawaban yang paling menggambarkan kemampuan Anda berjalan hari ini.', c:[0.119,0.073,0.218,0.203]},
+    {code:'SC', name:'Perawatan diri', prompt:'Bagaimana kondisi Anda hari ini dalam hal merawat diri sendiri?', help:'Misalnya mencuci badan atau berpakaian. Pilih satu jawaban.', c:[0.101,0.039,0.108,0.068]},
+    {code:'UA', name:'Kegiatan yang biasa dilakukan', prompt:'Bagaimana kondisi Anda hari ini dalam melakukan kegiatan yang biasa Anda lakukan?', help:'Misalnya bekerja, belajar, pekerjaan rumah tangga, kegiatan keluarga atau rekreasi.', c:[0.090,0.066,0.145,0.084]},
+    {code:'PD', name:'Nyeri / rasa tidak nyaman', prompt:'Bagaimana kondisi Anda hari ini terkait nyeri atau rasa tidak nyaman?', help:'Pilih tingkat yang paling sesuai dengan keadaan Anda hari ini.', c:[0.086,0.009,0.103,0.048]},
+    {code:'AD', name:'Rasa cemas / depresi', prompt:'Bagaimana kondisi Anda hari ini terkait rasa cemas atau depresi?', help:'Pilih tingkat yang paling sesuai dengan keadaan Anda hari ini.', c:[0.079,0.055,0.093,0.078]}
+  ];
+  // Parafrasa informatif, bukan reproduksi terjemahan kuesioner berhak cipta.
+  const statements = {
+    MO:['Saya tidak mengalami kesulitan berjalan','Saya mengalami sedikit kesulitan berjalan','Saya mengalami kesulitan sedang berjalan','Saya mengalami kesulitan berat berjalan','Saya tidak mampu berjalan'],
+    SC:['Saya tidak mengalami kesulitan merawat diri','Saya mengalami sedikit kesulitan merawat diri','Saya mengalami kesulitan sedang merawat diri','Saya mengalami kesulitan berat merawat diri','Saya tidak mampu merawat diri'],
+    UA:['Saya tidak mengalami kesulitan melakukan kegiatan yang biasa saya lakukan','Saya mengalami sedikit kesulitan melakukan kegiatan yang biasa saya lakukan','Saya mengalami kesulitan sedang melakukan kegiatan yang biasa saya lakukan','Saya mengalami kesulitan berat melakukan kegiatan yang biasa saya lakukan','Saya tidak mampu melakukan kegiatan yang biasa saya lakukan'],
+    PD:['Saya tidak merasa nyeri atau tidak nyaman','Saya merasa sedikit nyeri atau tidak nyaman','Saya merasa nyeri atau tidak nyaman dalam tingkat sedang','Saya merasa sangat nyeri atau tidak nyaman','Saya merasa amat sangat nyeri atau tidak nyaman'],
+    AD:['Saya tidak merasa cemas atau depresi','Saya merasa sedikit cemas atau depresi','Saya merasa cemas atau depresi dalam tingkat sedang','Saya merasa sangat cemas atau depresi','Saya merasa amat sangat cemas atau depresi']
+  };
+  const host = document.getElementById('dimensions');
+  const coeffHost = document.getElementById('coefficientRows');
+  dims.forEach(d => {
+    const row = document.createElement('div'); row.className = 'dimension';
+    const label = document.createElement('div');
+    const title = document.createElement('div'); title.className = 'dim-title'; title.textContent = d.name;
+    const prompt = document.createElement('p'); prompt.className = 'dim-prompt'; prompt.textContent = d.prompt;
+    const help = document.createElement('small'); help.textContent = d.help;
+    label.append(title,prompt,help);
+    const group = document.createElement('div'); group.className = 'choices'; group.setAttribute('role','radiogroup'); group.setAttribute('aria-label',d.name);
+    for (let n=1;n<=5;n++) {
+      const l=document.createElement('label'); l.className='choice';
+      const input=document.createElement('input'); input.type='radio'; input.name=d.code; input.value=String(n); input.setAttribute('aria-label',statements[d.code][n-1]); input.addEventListener('change',calculate);
+      const span=document.createElement('span'); span.textContent=statements[d.code][n-1]; span.setAttribute('data-level',String(n));
+      l.append(input,span); group.append(l);
+    }
+    row.append(label,group); host.append(row);
+    const tr=document.createElement('tr');
+    const nameCell=document.createElement('td'); nameCell.textContent=d.code+' · '+d.name;
+    tr.append(nameCell);
+    d.c.forEach(x=>{const td=document.createElement('td');td.textContent=x.toFixed(3);tr.append(td);});
+    coeffHost.append(tr);
+  });
+  const selected = () => dims.map(d => Number(document.querySelector('input[name="'+d.code+'"]:checked')?.value || 0));
+  let currentIndex=null, currentProfile='';
+  function calculate(){
+    const lv=selected(), complete=lv.every(Boolean), years=Number(document.getElementById('lifeYears').value);
+    currentProfile=complete?lv.join(''):'—';
+    document.getElementById('stickyProfile').textContent=currentProfile;
+    if(!complete){
+      currentIndex=null;document.getElementById('index').textContent='—';document.getElementById('qaly').textContent='—';
+      document.getElementById('stickyIndex').textContent='—';
+      document.getElementById('indexNote').textContent='Lengkapi kelima dimensi terlebih dahulu.';
+      document.getElementById('formStatus').textContent='Pilih tingkat pada '+(5-lv.filter(Boolean).length)+' dimensi yang tersisa.';
+      document.getElementById('qalyDetail').textContent='QALY = utility index × tahun.';return;
+    }
+    const dimensionPenalties=lv.map((level,i)=>dims[i].c.slice(0,level-1).reduce((a,b)=>a+b,0));
+    const penalty=dimensionPenalties.reduce((a,b)=>a+b,0); currentIndex=1-penalty;
+    document.getElementById('index').textContent=currentIndex.toFixed(3);
+    document.getElementById('stickyIndex').textContent=currentIndex.toFixed(3);
+    document.getElementById('indexNote').textContent='1 − ('+dimensionPenalties.map(x=>x.toFixed(3)).join(' + ')+') = '+currentIndex.toFixed(3)+'.';
+    document.getElementById('formStatus').textContent='Profil lengkap: '+currentProfile+' · penalti total '+penalty.toFixed(3)+'.';
+    const validYears=Number.isFinite(years)&&years>=0&&years<=120;
+    const q=validYears?currentIndex*years:null;
+    document.getElementById('qaly').textContent=q===null?'—':q.toFixed(2);
+    document.getElementById('qalyDetail').textContent=q===null?'Masukkan sisa harapan hidup antara 0 sampai 120 tahun.':'QALY = '+currentIndex.toFixed(3)+' × '+years.toFixed(1)+' tahun = '+q.toFixed(2)+' QALY (tanpa diskonto; utility dianggap konstan).';
+  }
+  document.getElementById('lifeYears').addEventListener('input',calculate);
+  const vasScore=document.getElementById('vasScore');
+  const vasOutput=document.getElementById('vasOutput');
+  function syncVas(){
+    const value=String(vasScore.value);
+    vasOutput.value=value;vasOutput.textContent=value;
+  }
+  vasScore.addEventListener('input',syncVas);
+  vasScore.addEventListener('change',syncVas);
+  syncVas();
+  document.getElementById('resetBtn').addEventListener('click',()=>{document.querySelectorAll('input[type="radio"]').forEach(x=>x.checked=false);document.getElementById('lifeYears').value='20';vasScore.value='80';syncVas();document.getElementById('copyStatus').textContent='';calculate();});
+  document.getElementById('copyBtn').addEventListener('click',async()=>{
+    if(currentIndex===null){document.getElementById('copyStatus').textContent='Pilih semua dimensi terlebih dahulu.';return;}
+    const years=Number(document.getElementById('lifeYears').value);
+    if(!Number.isFinite(years)||years<0||years>120){document.getElementById('copyStatus').textContent='Masukkan sisa harapan hidup yang valid sebelum menyalin.';return;}
+    const text='EQ-5D-5L Indonesia (contoh)\nProfil: '+currentProfile+'\nUtility index: '+currentIndex.toFixed(3)+'\nEQ VAS: '+document.getElementById('vasScore').value+'/100\nSisa harapan hidup: '+years.toFixed(1)+' tahun\nQALY ilustratif (utility konstan, tanpa diskonto): '+document.getElementById('qaly').textContent;
+    try{await navigator.clipboard.writeText(text);document.getElementById('copyStatus').textContent='Ringkasan disalin.';}catch(e){document.getElementById('copyStatus').textContent='Clipboard tidak tersedia. Pilih dan salin hasil secara manual.';}
+  });
+  calculate();
+})();
+</script>
+</body>
+</html>
